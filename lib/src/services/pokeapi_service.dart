@@ -1,40 +1,53 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:pokedex/src/models/lista_pokemons.dart';
+import 'package:pokedex/src/models/result.dart';
+
+import '../models/pokemon.dart';
 
 class PokeApiService {
   final String apiUrl = 'https://pokeapi.co/api/v2';
 
-  Future<List<Map<String, dynamic>>> obterListaPokemons({
-    int limit = 20,
-    int offset = 30,
+  Future<ListaPokemons> obterListaPokemons({
+    int? limit = 20,
+    int? offset = 0,
+    String? urlCompleta,
   }) async {
-    var url = Uri.parse('$apiUrl/pokemon?limit$limit&offset$offset');
+    var url = urlCompleta != null
+        ? Uri.parse(urlCompleta)
+        : Uri.parse('$apiUrl/pokemon?limit$limit&offset$offset');
+
     var req = await http.get(url);
 
     if (req.statusCode == 200) {
       var json = jsonDecode(req.body);
+      var results = ResultList.fromJson(json);
 
-      List<Map<String, dynamic>> listaPokemons = [];
+      List<Pokemon> listaPokemons = [];
 
-      for (var pok in json['results']) {
-        var detalhes = await obterDetalhesPokemon(pok['url']);
+      for (var pok in results.results) {
+        var detalhes = await obterDetalhesPokemon(pok.url);
         listaPokemons.add(detalhes);
       }
 
-      return listaPokemons;
+      return ListaPokemons(
+        next: results.next,
+        pokemons: listaPokemons,
+        previous: results.previous,
+      );
     } else {
       throw Exception('Erro ao requisitar dados');
     }
   }
 
-  Future<Map<String, dynamic>> obterDetalhesPokemon(String pokemonUrl) async {
+  Future<Pokemon> obterDetalhesPokemon(String pokemonUrl) async {
     var url = Uri.parse(pokemonUrl);
     var req = await http.get(url);
 
     if (req.statusCode == 200) {
       var json = jsonDecode(req.body);
-      return json;
+      return Pokemon.fromJson(json);
     } else {
       throw Exception('Erro ao requisitar dados');
     }
