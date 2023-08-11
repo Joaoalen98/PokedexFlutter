@@ -1,4 +1,4 @@
-import 'package:pokedex/src/models/pokemon.dart';
+import 'package:pokedex/src/models/poke_api/pokemon.dart';
 
 class ListaPokemons {
   String? next;

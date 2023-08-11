@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/src/models/lista_pokemons.dart';
+import 'package:pokedex/src/pages/detalhes_pokemon.dart';
 import 'package:pokedex/src/services/pokeapi_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,20 +12,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final pokeService = PokeApiService();
+  int pagina = 1;
   ListaPokemons? results;
 
-  void obterPokemons({String? url}) {
+  void obterPokemons() {
     setState(() {
       results = null;
     });
 
-    pokeService
-        .obterListaPokemons(
-      limit: 20,
-      offset: 0,
-      urlCompleta: url,
-    )
-        .then((val) {
+    pokeService.obterListaPokemons(page: pagina).then((val) {
       setState(() {
         results = val;
       });
@@ -41,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pókedex Flutter'),
+        title: const Text('Pókedex'),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -68,16 +64,18 @@ class _HomePageState extends State<HomePage> {
                   TextButton(
                     onPressed: () {
                       if (results?.previous != null) {
-                        obterPokemons(url: results?.previous);
+                        pagina--;
+                        obterPokemons();
                       }
                     },
                     child: const Text('Anterior'),
                   ),
-                  const Text('Página'),
+                  Text('Página $pagina'),
                   TextButton(
                     onPressed: () {
                       if (results?.next != null) {
-                        obterPokemons(url: results?.next);
+                        pagina++;
+                        obterPokemons();
                       }
                     },
                     child: const Text('Próximo'),
@@ -97,25 +95,25 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               Image(
                                 image: Image.network(
-                                  pokemon.sprites.frontDefault,
+                                  pokemon.sprites!.frontDefault!,
                                 ).image,
                                 width: 80,
                               ),
                               Column(
                                 children: [
                                   Text(
-                                    pokemon.name,
+                                    pokemon.name!,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                     ),
                                   ),
                                   Row(
-                                    children: pokemon.types
+                                    children: pokemon.types!
                                         .map(
                                           (tipo) => TextButton(
                                             onPressed: () {},
-                                            child: Text(tipo.type.name),
+                                            child: Text(tipo.type!.name!),
                                           ),
                                         )
                                         .toList(),
@@ -123,7 +121,16 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetalhesPokemon(
+                                        pokemon: pokemon,
+                                      ),
+                                    ),
+                                  );
+                                },
                                 icon: const Icon(Icons.search),
                               ),
                             ],

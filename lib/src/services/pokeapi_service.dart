@@ -2,32 +2,30 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:pokedex/src/models/lista_pokemons.dart';
-import 'package:pokedex/src/models/result.dart';
+import 'package:pokedex/src/models/poke_api/resource_list.dart';
 
-import '../models/pokemon.dart';
+import '../models/poke_api/pokemon.dart';
 
 class PokeApiService {
-  final String apiUrl = 'https://pokeapi.co/api/v2';
+  final String __apiUrl = 'https://pokeapi.co/api/v2';
+  final int __limit = 20;
 
   Future<ListaPokemons> obterListaPokemons({
-    int? limit = 20,
-    int? offset = 0,
-    String? urlCompleta,
+    int page = 1,
   }) async {
-    var url = urlCompleta != null
-        ? Uri.parse(urlCompleta)
-        : Uri.parse('$apiUrl/pokemon?limit$limit&offset$offset');
+    int offset = (page - 1) * __limit;
+    var uri = Uri.parse('$__apiUrl/pokemon?limit=$__limit&offset=$offset');
 
-    var req = await http.get(url);
+    var req = await http.get(uri);
 
     if (req.statusCode == 200) {
       var json = jsonDecode(req.body);
-      var results = ResultList.fromJson(json);
+      var results = ResourceList.fromJson(json);
 
       List<Pokemon> listaPokemons = [];
 
-      for (var pok in results.results) {
-        var detalhes = await obterDetalhesPokemon(pok.url);
+      for (var pok in results.results!) {
+        var detalhes = await obterDetalhesPokemon(pok.url!);
         listaPokemons.add(detalhes);
       }
 
