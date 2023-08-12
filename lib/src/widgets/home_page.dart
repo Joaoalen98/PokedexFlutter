@@ -13,26 +13,33 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final pokeService = PokeApiService();
-  int pagina = 1;
   ListaPokemons? results;
 
-  void obterPokemons() async {
+  void obterPokemons(String url) async {
     setState(() {
       results = null;
     });
 
     try {
-      var req = await pokeService.obterListaPokemons(page: pagina);
+      var req = await pokeService.obterListaPokemons(
+        url,
+      );
       setState(() {
         results = req;
       });
-    } catch (e) {}
+    } catch (e) {
+      results = ListaPokemons(
+        next: null,
+        previous: null,
+        pokemons: [],
+      );
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    obterPokemons();
+    obterPokemons(pokeService.pokemonListBaseUrl);
   }
 
   @override
@@ -60,7 +67,6 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 20,
               ),
-              Text('Página $pagina'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -68,8 +74,7 @@ class _HomePageState extends State<HomePage> {
                       ? TextButton(
                           onPressed: () {
                             if (results?.previous != null) {
-                              pagina--;
-                              obterPokemons();
+                              obterPokemons(results!.previous!);
                             }
                           },
                           child: const Text('Anterior'),
@@ -79,8 +84,7 @@ class _HomePageState extends State<HomePage> {
                       ? TextButton(
                           onPressed: () {
                             if (results?.next != null) {
-                              pagina++;
-                              obterPokemons();
+                              obterPokemons(results!.next!);
                             }
                           },
                           child: const Text('Próximo'),

@@ -7,15 +7,11 @@ import 'package:pokedex/src/models/poke_api/resource_list.dart';
 import '../models/poke_api/pokemon.dart';
 
 class PokeApiService {
-  final String __apiUrl = 'https://pokeapi.co/api/v2';
-  final int __limit = 10;
+  String pokemonListBaseUrl =
+      'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20';
 
-  Future<ListaPokemons> obterListaPokemons({
-    int page = 1,
-  }) async {
-    int offset = (page - 1) * __limit;
-    var uri = Uri.parse('$__apiUrl/pokemon?limit=$__limit&offset=$offset');
-
+  Future<ListaPokemons> obterListaPokemons(String url) async {
+    var uri = Uri.parse(url);
     var req = await http.get(uri);
 
     if (req.statusCode == 200) {

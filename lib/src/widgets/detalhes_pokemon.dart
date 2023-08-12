@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/src/models/poke_api/pokemon.dart';
 import 'package:pokedex/src/services/color_service.dart';
 import 'package:pokedex/src/widgets/card_tipo_pokemon.dart';
+import 'package:pokedex/src/widgets/stat_pokemon.dart';
 
 class DetalhesPokemon extends StatefulWidget {
   final Pokemon pokemon;
@@ -15,6 +16,20 @@ class DetalhesPokemon extends StatefulWidget {
 class _DetalhesPokemonState extends State<DetalhesPokemon> {
   final colorService = ColorService();
   Color? backgroundColor;
+
+  double obterPorcentagem(int value) {
+    int widthBase = 100;
+
+    var valorMax = 0;
+    for (var stat in widget.pokemon.stats!) {
+      if (valorMax < stat.baseStat!) {
+        valorMax = stat.baseStat!;
+      }
+    }
+
+    var perc = (value * widthBase) / valorMax;
+    return perc;
+  }
 
   @override
   void initState() {
@@ -74,9 +89,51 @@ class _DetalhesPokemonState extends State<DetalhesPokemon> {
                             },
                           ).toList(),
                         ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const Text(
+                          'Estatísticas:',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: backgroundColor!.withOpacity(0.2),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(20),
+                            ),
+                            border: Border.all(
+                              color: backgroundColor!,
+                              width: 2,
+                            ),
+                          ),
+                          child: Column(
+                            children: widget.pokemon.stats!
+                                .map(
+                                  (stat) => StatPokemon(
+                                    backgroundColor: backgroundColor!,
+                                    baseStat: stat.baseStat!,
+                                    porcentagem: obterPorcentagem(
+                                      stat.baseStat!,
+                                    ),
+                                    statName: stat.stat!.name!,
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
