@@ -8,7 +8,7 @@ import '../models/poke_api/pokemon.dart';
 
 class PokeApiService {
   final String __apiUrl = 'https://pokeapi.co/api/v2';
-  final int __limit = 20;
+  final int __limit = 10;
 
   Future<ListaPokemons> obterListaPokemons({
     int page = 1,
