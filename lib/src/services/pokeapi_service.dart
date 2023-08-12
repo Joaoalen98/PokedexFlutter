@@ -7,8 +7,8 @@ import 'package:pokedex/src/models/poke_api/resource_list.dart';
 import '../models/poke_api/pokemon.dart';
 
 class PokeApiService {
-  String pokemonListBaseUrl =
-      'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20';
+  static const String baseUrl = 'https://pokeapi.co/api/v2/pokemon/';
+  static String pokemonListBaseUrl = '$baseUrl?offset=0&limit=20';
 
   Future<ListaPokemons> obterListaPokemons(String url) async {
     var uri = Uri.parse(url);

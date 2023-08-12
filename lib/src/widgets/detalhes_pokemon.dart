@@ -55,12 +55,14 @@ class _DetalhesPokemonState extends State<DetalhesPokemon> {
               child: Column(
                 children: [
                   Container(
-                    alignment: Alignment.bottomLeft,
+                    padding: const EdgeInsets.all(20),
+                    alignment: Alignment.center,
                     width: double.infinity,
-                    height: 100,
+                    height: 200,
                     color: backgroundColor?.withOpacity(0.3),
                     child: Image.network(
-                      widget.pokemon.sprites!.frontDefault!,
+                      widget.pokemon.sprites!.other!.officialArtwork!
+                          .frontDefault!,
                     ),
                   ),
                   const SizedBox(
@@ -69,9 +71,10 @@ class _DetalhesPokemonState extends State<DetalhesPokemon> {
                   Text(
                     widget.pokemon.name!,
                     textAlign: TextAlign.left,
-                    style: const TextStyle(
-                      fontSize: 20,
+                    style: TextStyle(
+                      fontSize: 30,
                       fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade800,
                     ),
                   ),
                   Container(

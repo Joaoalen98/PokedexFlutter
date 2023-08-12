@@ -35,7 +35,7 @@ class StatPokemon extends StatelessWidget {
             children: [
               Container(
                 width: porcentagem,
-                height: 25,
+                height: 15,
                 decoration: BoxDecoration(
                   color: backgroundColor.withOpacity(0.5),
                   borderRadius: const BorderRadius.all(

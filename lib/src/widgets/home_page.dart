@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/src/models/lista_pokemons.dart';
+import 'package:pokedex/src/models/poke_api/pokemon.dart';
 import 'package:pokedex/src/services/pokeapi_service.dart';
+import 'package:pokedex/src/widgets/detalhes_pokemon.dart';
 
 import 'card_pokemon.dart';
 
@@ -12,6 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final pesquisaController = TextEditingController();
   final pokeService = PokeApiService();
   ListaPokemons? results;
 
@@ -36,10 +39,31 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void pesquisarPokemon(String nome) async {
+    try {
+      if (pesquisaController.text != '') {
+        var pokemon = await pokeService.obterDetalhesPokemon(
+          PokeApiService.baseUrl + nome,
+        );
+
+        await irParaDetalhes(pokemon);
+      }
+    } catch (e) {}
+  }
+
+  Future irParaDetalhes(Pokemon pokemon) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetalhesPokemon(pokemon: pokemon),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    obterPokemons(pokeService.pokemonListBaseUrl);
+    obterPokemons(PokeApiService.pokemonListBaseUrl);
   }
 
   @override
@@ -54,19 +78,36 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               TextFormField(
+                controller: pesquisaController,
                 decoration: const InputDecoration(
                   label: Text('Pesquisar pókemon'),
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  pesquisarPokemon(pesquisaController.text);
+                },
                 child: const Text(
                   'Pesquisar',
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              results != null
+                  ? Column(
+                      children: results!.pokemons.map(
+                      (pokemon) {
+                        return Column(
+                          children: [
+                            CardPokemon(
+                              pokemon: pokemon,
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                          ],
+                        );
+                      },
+                    ).toList())
+                  : const CircularProgressIndicator(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -92,26 +133,6 @@ class _HomePageState extends State<HomePage> {
                       : Container(),
                 ],
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              results != null
-                  ? Column(
-                      children: results!.pokemons.map(
-                      (pokemon) {
-                        return Column(
-                          children: [
-                            CardPokemon(
-                              pokemon: pokemon,
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                          ],
-                        );
-                      },
-                    ).toList())
-                  : const CircularProgressIndicator(),
             ],
           ),
         ),

@@ -82,7 +82,8 @@ class _CardPokemonState extends State<CardPokemon> {
                 ),
                 Image(
                   image: Image.network(
-                    widget.pokemon.sprites!.frontDefault!,
+                    widget
+                        .pokemon.sprites!.other!.officialArtwork!.frontDefault!,
                   ).image,
                   width: 80,
                 ),
