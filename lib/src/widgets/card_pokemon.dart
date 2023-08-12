@@ -3,6 +3,7 @@ import 'package:pokedex/src/services/color_service.dart';
 import 'package:pokedex/src/widgets/detalhes_pokemon.dart';
 
 import '../models/poke_api/pokemon.dart';
+import 'card_tipo_pokemon.dart';
 
 class CardPokemon extends StatefulWidget {
   final Pokemon pokemon;
@@ -39,7 +40,7 @@ class _CardPokemonState extends State<CardPokemon> {
         ? TextButton(
             style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(
-                backgroundCard?.withOpacity(0.3),
+                backgroundCard?.withOpacity(0.2),
               ),
             ),
             onPressed: () {
@@ -70,24 +71,9 @@ class _CardPokemonState extends State<CardPokemon> {
                     Row(
                       children: widget.pokemon.types!
                           .map(
-                            (tipo) => Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              decoration: BoxDecoration(
-                                color: backgroundCard?.withOpacity(0.5),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 5,
-                              ),
-                              child: Text(
-                                tipo.type!.name!,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                ),
-                              ),
+                            (tipo) => CardTipoPokemon(
+                              backgroundCard: backgroundCard,
+                              tipo: tipo.type!.name!,
                             ),
                           )
                           .toList(),

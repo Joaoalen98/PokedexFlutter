@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/src/models/poke_api/pokemon.dart';
 import 'package:pokedex/src/services/color_service.dart';
+import 'package:pokedex/src/widgets/card_tipo_pokemon.dart';
 
 class DetalhesPokemon extends StatefulWidget {
   final Pokemon pokemon;
@@ -66,18 +67,9 @@ class _DetalhesPokemonState extends State<DetalhesPokemon> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: widget.pokemon.types!.map(
                             (type) {
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 5,
-                                  horizontal: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: backgroundColor?.withOpacity(0.5),
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-                                ),
-                                child: Text(type.type!.name!),
+                              return CardTipoPokemon(
+                                backgroundCard: backgroundColor,
+                                tipo: type.type!.name!,
                               );
                             },
                           ).toList(),
